@@ -1,0 +1,359 @@
+{% extends "./layout/layout.html" %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/public/css/page-sj-qa-detail.css" />
+<link rel="stylesheet" type="text/css" href="/node_modules/simplemde/dist/simplemde.min.css">
+<link rel="stylesheet" type="text/css" href="/node_modules/github-markdown-css/github-markdown.css">
+<style>
+    .markdown-body {
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 980px;
+        margin: 0 auto;
+        /* padding: 45px; */
+    }
+
+    @media (max-width: 767px) {
+        .markdown-body {
+            padding: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<!--两列布局-->
+<div class="wrapper qa-content">
+    {% if topic %}
+    <div class="qa-title" id="topic-show" data-id="{{ topic._id }}">
+        <div class="fl title">
+            <h2>{{ topic.title }}</h2>
+            <p>
+                {% for item in topic.tags %}
+                <span class="tag">{{ item }}</span>
+                {% endfor %}
+                <span class="author">{{ user.nickname }}</span>
+                <span>{{ topic.createdAt | RelativeTime }}提问 · {{ topic.updatedAt | RelativeTime }}更新</span>
+            </p>
+            {% if user._id === topic.user._id %}
+            <p style="margin-top: 10px">
+                <a href="/topic/{{ topic._id }}/edit">编辑</a>
+                <a href="/topic/{{ topic._id }}/del" id="del">删除</a>
+            </p>
+            {% endif %}
+        </div>
+        <div class="fr share">
+            <h4>分享到：</h4>
+            <ul class="share-go">
+                <li><img src="/public/img/widget-weibo.png" alt=""></li>
+                <li><img src="/public/img/widget-weixin.png" alt=""></li>
+                <li><img src="/public/img/widget-weibo.png" alt=""></li>
+                <li><img src="/public/img/widget-weixin.png" alt=""></li>
+            </ul>
+
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="fl left-list">
+        <div class="problem-detail">
+            <div class="title-intro">
+                <div class="sidebar" id="post-comment-button">
+
+                    <button type="button" class="like" data-placement="right" data-toggle="tooltip" data-type="posts"
+                        data-type-id="{{ topic._id }}" data-value="1" title="问题对人有帮助，内容完整，我也想知道答案"><i
+                            class="fa fa-caret-up" aria-hidden="true"></i></button>
+                    <span class="count">0</span>
+                    <button type="button" class="hate" data-placement="right" data-toggle="tooltip" data-type="post"
+                        data-type-id="{{ topic._id }}" data-value="-1" title="问题没有实际价值，缺少关键内容，没有改进余地"><i
+                            class="fa fa-caret-down" aria-hidden="true"></i></button>
+
+                </div>
+                <div class="title">
+                    <div class="detail">
+                        {{ topic.body | mdToHtml | safe }}
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="operate">
+                        <span class="time">1小时前提问</span>
+                        <span class="comment">评论</span>
+                        <span class="edit">编辑</span>
+                        <span class="jubao">举报</span>
+                    </div>
+                    <!-- <div class="comment-box">
+                        <form class="comment-form">
+                            <textarea row="1" placeholder="使用评论询问更多信息或提出修改意见，请不要在评论里回答问题"></textarea>
+                            <button type="submit" class="sui-btn submit-comment">提交评论</button>
+                        </form>
+                        <div class="tips">
+                            <p>评论支持部分 Markdown 语法：**bold**_italic_[link](http://example.com)> 引用`code`- 列表。 同时，被你 @
+                                的用户也会收到通知</p>
+                        </div>
+                    </div> -->
+
+                </div>
+
+            </div>
+            <div class="answer-intro" id="trigger">
+                <!-- 填坑评论 -->
+            </div>
+            <div class="edit-answer">
+                <h4>撰写答案</h4>
+                <form id="answer-form" action="/comment/answer/{{ topic._id }}">
+                    <textarea name="body" id="mde" cols="30" rows="10"></textarea>
+                    <button type="submit">提交评论</button>
+                </form>
+            </div>
+        </div>
+        <!-- <script>
+            $(function () {
+                $(".comment").click(function () {
+                    $(this).parents(".operate").siblings(".comment-box").toggle();
+                });
+                $(".sidebar .fa").hover(function () {
+                    $(this).css("color", "#e64620");
+                }, function () {
+                    $(this).css("color", "#000");
+                })
+            })
+        
+        </script> -->
+    </div>
+    <div class="fl right-tag">
+        <div class="similar-problem">
+            <h3 class="title">相似问题</h3>
+            <ul class="problem-list">
+                <li class="list-item">
+                    <p class="list-title">求一份浏览器中html css javascript jquery ajax的渲染顺序与原理！！</p>
+                    <p class="list-info"><a href="">1 回答</a> | 已解决</p>
+                </li>
+                <li class="list-item">
+                    <p class="list-title">求一份浏览器中html css javascript jquery ajax的渲染顺序与原理！！</p>
+                    <p class="list-info"><a href="">1 回答</a> | 已解决</p>
+                </li>
+                <li class="list-item">
+                    <p class="list-title">求一份浏览器中html css javascript jquery ajax的渲染顺序与原理！！</p>
+                    <p class="list-info"><a href="">1 回答</a> | 已解决</p>
+                </li>
+                <li class="list-item">
+                    <p class="list-title">求一份浏览器中html css javascript jquery ajax的渲染顺序与原理！！</p>
+                    <p class="list-info"><a href="">1 回答</a> | 已解决</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    {% else %}
+    <h1 style="color: maroon">该问题已被删除！！</h1>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="/node_modules/simplemde/dist/simplemde.min.js"></script>
+<!-- 评论模板引擎 -->
+<script type="text/template" id="comment">
+    <% comments.forEach(item => { %>
+    <div class="sidebar">
+        <button type="button" class="like" data-placement="right" data-toggle="tooltip"
+            title="问题对人有帮助，内容完整，我也想知道答案"><i class="fa fa-caret-up" aria-hidden="true"></i></button>
+        <span class="count">0</span>
+        <button type="button" class="hate" data-placement="right" data-toggle="tooltip"
+            title="问题没有实际价值，缺少关键内容，没有改进余地"><i class="fa fa-caret-down" aria-hidden="true"></i></button>
+    </div>
+    <div class="title" id="parent">
+        <p><%= item.body %></p>
+        <div class="operate">
+            <div class="tool pull-left">
+                <span class="time"><%= item.createdAt %>评论</span>
+                <span class="time"><%= item.updatedAt %>更新</span>
+                <% if (item.userId === userId) { %>
+                <span class="edit" id="comment-edit" data-id="<%= item._id %>" data-content="<%= item.body %>">编辑</span>
+                <span class="jubao" id="comment-del" data-id="<%= item._id %>" data-content="<%= item.body %>">删除</span>
+                <% } %>
+            </div>
+
+            <div class="myanswer pull-right">
+                <img src="/public/img/widget-photo.jpg" alt=""> <a href="#">我的回答</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="comment-box" id="comment-box">
+            <form class="comment-form" id="comment-edit-form">
+                <textarea id="txt" name="body" row="1" placeholder="使用评论询问更多信息或提出修改意见，请不要在评论里回答问题"></textarea>
+                <button type="submit" class="sui-btn submit-comment">提交评论</button>
+            </form>
+            <div class="tips">
+                <p>评论支持部分 Markdown 语法：**bold**_italic_[link](http://example.com)> 引用`code`- 列表。 同时，被你 @
+                    的用户也会收到通知</p>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <% }) %>
+</script>
+<script src="/node_modules/dayjs/dayjs.min.js"></script>
+<script src="/node_modules/dayjs/plugin/relativeTime.js"></script>
+<script src="/node_modules/dayjs/locale/zh-cn.js"></script>
+<script>
+    $(function () {
+        // 加载中文包
+        dayjs.locale('zh-cn')
+
+        // 加载相对时间模块
+        dayjs.extend(dayjs_plugin_relativeTime)
+
+        // 初始化编辑器
+        let simplemde = new SimpleMDE({
+            element: $("#mde")[0], //挂载点dom元素
+            spellChecker: false, // 关闭拼写检查
+            autosave: { // 自动保存
+                enabled: true,
+                uniqueId: "MyUniqueID_02", // 本地存储的key
+                delay: 1000,
+            }
+        })
+
+        // 进入页面后请求该问题的评论列表 lodash前端模板渲染
+        function getCommentList() {
+            // console.log($('#topic-show').data('id'))
+            $.ajax({
+                url: `/comment/${$('#topic-show').data('id')}/getAll`,
+                method: 'GET',
+                success(res) {
+                    if (res.code === 0) {
+                        // console.log(res.records)
+                        // 转化时间
+                        res.records.forEach(v => {
+                            v.createdAt = dayjs().from(dayjs(v.createdAt))
+                            v.updatedAt = dayjs().from(dayjs(v.updatedAt))
+                        })
+                        // 从localStronge中取当前用户信息
+                        let userId = JSON.parse(window.localStorage.getItem('userInfo')).userId
+                        // console.log(userId)
+                        let tmpStr = $('#comment').html()
+                        let str = _.template(tmpStr)({
+                            comments: res.records,
+                            userId
+                        })
+                        // console.log(str)
+                        $('.answer-intro').html(str)
+                    }
+                }
+            })
+        }
+
+        getCommentList()
+
+        // 当前用户编辑自己发布的评论
+        $('#trigger').on('click', '#comment-edit', function () {
+            // console.log()
+            let $box = $(this).closest('#parent').find('#comment-box')
+            let commentId = $(this).data('id')
+            let content = $(this).data('content')
+            $box.show()
+            $(this).closest('#parent').find('#txt').text(content)
+            $(this).closest('#parent').find('#comment-edit-form').on('submit', function () {
+                // console.log($(this).serialize())
+                $.ajax({
+                    url: `/comment/${commentId}/update`,
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success(res) {
+                        console.log(res)
+                        if (res.code === 0) {
+                            alert('评论更新成功！')
+                            getCommentList()
+                        }
+                    }
+                })
+                return false
+            })
+        })
+
+        // 当前用户删除自己发布的评论
+        $('#trigger').on('click', '#comment-del', function () {
+            if (!confirm('确定要删除评论吗?')) return
+            let commentId = $(this).data('id')
+            $.ajax({
+                url: `/comment/${commentId}/del`,
+                method: 'GET',
+                success(res) {
+                    // console.log(res)
+                    if (res.code === 0) {
+                        alert('删除成功！')
+                        getCommentList()
+                    }
+                }
+            })
+        })
+
+        // 提交对别人问题的回答
+        $('#answer-form').on('submit', function () {
+            // console.log($(this).serialize())
+            // console.log($(this).attr('action'))
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                success(res) {
+                    // console.log(res)
+                    if (res.code === 0) {
+                        alert(res.msg)
+                        // 刷新评论列表
+                        getCommentList()
+                        // 清空表单
+                        simplemde.value('')
+                    }
+                }
+            })
+            return false
+        })
+
+        // 删除本人创建的问题
+        $('#del').on('click', function () {
+            // console.log($(this).attr('href'))
+            if (!confirm('确定要删除该问题吗?')) {
+                return false
+            }
+            $.ajax({
+                url: $(this).attr('href'),
+                method: 'GET',
+                success(res) {
+                    // console.log(res)
+                    if (res.code === 0) {
+                        alert(res.msg)
+                        // 删除成功后跳转到首页
+                        window.location.href = '/'
+                    }
+                }
+            })
+            return false
+        })
+
+        // 对发布的问题投票
+        $('#post-comment-button button').on('click', function () {
+            // console.log()
+            let {
+                type,
+                typeId,
+                value
+            } = $(this).data()
+            $.ajax({
+                url: '/vote/createOrUpdate',
+                method: 'POST',
+                data: {
+                    type,
+                    typeId,
+                    value
+                },
+                success(res) {
+                    console.log(res)
+                    //   if (res.code === 0) {
+
+                    //   }
+                }
+            })
+        })
+    })
+</script>
+{% endblock %}
