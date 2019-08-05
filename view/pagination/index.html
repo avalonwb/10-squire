@@ -1,3 +1,4 @@
+<!-- 首页页码器 -->
 {% macro pagination(_page, _limit, total, lastPage, filter) %}
 <div class="sui-pagination">
   <ul>
@@ -13,6 +14,26 @@
     {% endfor %}
     <li class="next {{ '' if _page < lastPage else 'disabled' }}"><a
         href="{{ '/?page=' + (_page + 1) + '&filter=' + filter if _page < lastPage else '#' }}">下一页</a></li>
+  </ul>
+</div>
+{% endmacro %}
+
+<!-- 标签页页码器 -->
+{% macro pagination_tags(_page, lastPage) %}
+<div class="sui-pagination">
+  <ul>
+    <li class="prev {{ '' if _page - 1 > 0 else 'disabled' }}"><a
+        href="{{ '/tags?page=' + (_page - 1) if _page - 1 > 0 else '#' }}">上一页</a></li>
+    {% for num in NumToArr(lastPage, _page) %}
+    {% if num === '...' %}
+    <li class="dotted"><span>...</span></li>
+    {% else %}
+    <li class="{{ 'active' if num === _page else '' }}"><a href="/tags?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+    <li class="next {{ '' if _page < lastPage else 'disabled' }}"><a
+        href="{{ '/tags?page=' + (_page + 1) if _page < lastPage else '#' }}">下一页</a></li>
   </ul>
 </div>
 {% endmacro %}

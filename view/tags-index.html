@@ -28,8 +28,8 @@
     </ul>
   </div>
   <!-- 分页器代码块 -->
-  {% from "./pagination/index.html" import pagination %}
-  {{ pagination(_page=_page, lastPage=lastPage) }}
+  {% from "./pagination/index.html" import pagination_tags %}
+  {{ pagination_tags(_page=_page, lastPage=lastPage) }}
 </div>
 {% endblock %}
 
