@@ -20,9 +20,10 @@
       <div id="index" class="tab-pane active">
         <div class="tab-bottom-line">
           <ul class="sui-nav nav-tabs">
-            <li class="active"><a href="#new" data-toggle="tab">最新回答</a></li>
-            <li><a href="#hot" data-toggle="tab">热门回答</a></li>
-            <li><a href="#wait" data-toggle="tab">等待回答</a></li>
+            {% for v in filterArr %}
+            <li class="{{ 'active' if filter === v.filter else '' }}"><a href="{{ v.url }}"
+                data-toggle="tab">{{ v.title }}</a></li>
+            {% endfor %}
           </ul>
           <div class="qa-list">
             <div class="tab-content">
@@ -66,7 +67,7 @@
                 </ul>
                 <!-- 分页器代码块 -->
                 {% from "./pagination/index.html" import pagination %}
-                {{ pagination(_page=_page, _limit=_limit, total=total, lastPage=lastPage) }}
+                {{ pagination(_page=_page, _limit=_limit, total=total, lastPage=lastPage, filter=filter) }}
               </div>
               <div id="hot" class="tab-pane">
                 <p>热门回答</p>

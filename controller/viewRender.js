@@ -13,9 +13,11 @@ const controller = {
     const _limit = 2
     // 当前页
     const _page = req.query.page || 1
+    const filter = req.query.filter || ''
+    // console.log(filter)
     // console.log(_page)
     // 请求所有问题
-    const ret = await getAllTopic(_page, _limit)
+    const ret = await getAllTopic(_page, _limit, filter)
     const topics = ret.data
     // 总页数
     const total = ret.total
@@ -36,12 +38,33 @@ const controller = {
     //   v.userInfo = user
     // })
     // console.log(topics)
+    // 最新回答 热门回答 等待回答
+    const filterArr = [
+
+      {
+        title: '最新回答',
+        url: '/?page=1',
+        filter: ''
+      },
+      {
+        title: '热门回答',
+        url: '/?page=1&filter=hot',
+        filter: 'hot'
+      },
+      {
+        title: '等待回答',
+        url: '/?page=1&filter=unresponsive',
+        filter: 'unresponsive'
+      }
+    ]
     res.render('index.html', {
       topics,
       _page: _page - 0,
       _limit: _limit - 0,
       total: total - 0,
-      lastPage
+      lastPage,
+      filterArr,
+      filter
     })
   },
   showPeopleHome: async (req, res, next) => {

@@ -6,6 +6,8 @@ const app = express()
 
 const router = require('./router/index')
 
+const _ = require('lodash')
+
 const topicRouter = require('./router/topic')
 const commentRouter = require('./router/comment')
 const voteRouter = require('./router/vote')
@@ -92,6 +94,62 @@ env.addFilter('RelativeTime', function (str) {
 // md语法转成html
 env.addFilter('mdToHtml', function (mdContent) {
   return md.render(mdContent)
+})
+
+// 传数字转数组
+env.addGlobal('NumToArr', function (lastPage, page) {
+  const totalPage = _.range(1, lastPage + 1)
+  // 显示当前页前2页与后2页
+  const range = 2
+
+  // 当前页的后两页
+  const afterPage = totalPage.slice(page, page + range)
+
+  // 当前页的前两页
+  const beforePage = totalPage.slice(page - lastPage - range - 1, page - 1)
+
+  // 当前页码前2页 + 当前页码 + 当前页码后两页
+  let pageItems = [
+    ...beforePage,
+    page,
+    ...afterPage
+  ]
+
+  // 第一页页码
+  let firstItem = [1]
+  // 最后一页页码
+  let lastItem = [lastPage]
+
+  if (range + 2 < page) {
+    firstItem = [
+      ...firstItem,
+      '...'
+    ]
+  }
+
+  if (lastPage - page - 1 > range) {
+    lastItem = [
+      '...',
+      ...lastItem
+    ]
+  }
+
+  if (range + 1 < page) {
+    pageItems = [
+      ...firstItem,
+      ...pageItems
+    ]
+  }
+
+  if (lastPage - page > range) {
+    pageItems = [
+      ...pageItems,
+      ...lastItem
+    ]
+  }
+
+  return pageItems
+
 })
 
 app.listen(3000, () => {
