@@ -12,6 +12,7 @@ const topicRouter = require('./router/topic')
 const commentRouter = require('./router/comment')
 const voteRouter = require('./router/vote')
 const tagsRouter = require('./router/tags')
+const personRouter = require('./router/person')
 
 const session = require('express-session')
 
@@ -80,6 +81,9 @@ app.use(voteRouter)
 
 // 挂载标签模块路由
 app.use(tagsRouter)
+
+// 挂载个人主页路由
+app.use(personRouter)
 
 // 配置模板引擎 nunjucks
 const env = nunjucks.configure(path.join(__dirname, './view'), {

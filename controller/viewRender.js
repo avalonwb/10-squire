@@ -79,9 +79,6 @@ const controller = {
       allTags: allTags.data
     })
   },
-  showPeopleHome: async (req, res, next) => {
-    res.render('people-home.html')
-  },
   showLogin: async (req, res, next) => {
     res.render('signin.html')
   }

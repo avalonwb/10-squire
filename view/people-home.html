@@ -66,13 +66,9 @@
 <div class="wrapper  myhome">
   <div class="right-content">
     <div class="home-content">
-      <ul class="sui-nav nav-tabs nav-large">
-        <li class="active"><a href="#one" data-toggle="tab">动态</a></li>
-        <li><a href="#two" data-toggle="tab">回答</a></li>
-        <li><a href="#two" data-toggle="tab">提问</a></li>
-        <li><a href="#two" data-toggle="tab">文章</a></li>
-        <li><a href="#two" data-toggle="tab">收藏</a></li>
-        <li><a href="#two" data-toggle="tab">关注</a></li>
+      <ul class="sui-nav nav-tabs nav-large" id="nav-tabs">
+        <li class="active"><a href="/home/{{ user._id }}/posts" data-toggle="one">动态</a></li>
+        <li><a href="/home/{{ user._id }}/comments" data-toggle="two">回答</a></li>
       </ul>
       <div class="tab-content tab-wraped">
         <div id="one" class="tab-pane active">
@@ -197,5 +193,27 @@
 {% endblock %}
 
 {% block script %}
-<!-- 待填坑 -->
+<script>
+  $(function () {
+
+    $('#nav-tabs li a').on('click', function () {
+      // console.log($(this).data('toggle'))
+      // console.log($(this).attr('href'))
+      // console.log($(this).closest('#nav-tabs').find('li'))
+      // 变换tab
+      $(this).closest('#nav-tabs').find('li').removeClass('active')
+      $(this).parent().addClass('active')
+      // 变换内容
+      $('.tab-content').children('div').hide()
+      $(`#${$(this).data('toggle')}`).show()
+      // if ($(this).data('toggle') === 'one') {
+      //   $('#one').show()
+      //   $('#two').hidden()
+      // }
+
+      return false
+    })
+
+  })
+</script>
 {% endblock %}

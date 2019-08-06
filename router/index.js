@@ -16,7 +16,6 @@ const {
 
 router
   .get('/', viewRender.showIndex)
-  .get('/people/home', viewRender.showPeopleHome)
   .get('/login', viewRender.showLogin)
   .post(
     '/register',
