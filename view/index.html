@@ -12,9 +12,27 @@
 
 {% block main %}
 <!-- 导航 -->
-{% include "./layout/navbar.html" %}
+<!-- {% include "./layout/navbar.html" %} -->
 <!--两列布局-->
 <div class="wrapper  qa-content">
+  {% if tagInfo %}
+  <div>
+    <h1 class="tag-name">{{ tagInfo.name }}</h1>
+    <div>
+      <p>
+        <b>{{ tagInfo.postCount }}</b>个问题
+      </p>
+      <p>
+        <b id="follower-count">{{ tagInfo.followers.length }}</b>人关注
+      </p>
+    </div>
+    {% if tagInfo.followers.includes(user._id) %}
+    <button data-url="/tags/{{ tagInfo.name }}/follow" class="btn-danger" name="follow">取消关注</button>
+    {% else %}
+    <button data-url="/tags/{{ tagInfo.name }}/follow" class="btn-success" name="follow">关注</button>
+    {% endif %}
+  </div>
+  {% endif %}
   <div class="fl  left-list">
     <div class="tab-content">
       <div id="index" class="tab-pane active">
@@ -67,7 +85,7 @@
                 </ul>
                 <!-- 分页器代码块 -->
                 {% from "./pagination/index.html" import pagination %}
-                {{ pagination(_page=_page, _limit=_limit, total=total, lastPage=lastPage, filter=filter) }}
+                {{ pagination(_page=_page, lastPage=lastPage, filter=filter, tag=tagInfo.name) }}
               </div>
               <div id="hot" class="tab-pane">
                 <p>热门回答</p>
@@ -79,7 +97,7 @@
           </div>
         </div>
       </div>
-      <div id="php" class="tab-pane">
+      <!-- <div id="php" class="tab-pane">
         php
       </div>
       <div id="js" class="tab-pane">
@@ -90,7 +108,7 @@
       </div>
       <div id="java" class="tab-pane">
         java
-      </div>
+      </div> -->
     </div>
   </div>
   <!-- 登录前 -->
@@ -133,15 +151,11 @@
       </div>
       <div class="tags">
         <ul class="sui-tag">
-          <li>Php</li>
-          <li>Javascript</li>
-          <li>Gif</li>
-          <li>Java</li>
-          <li>C#</li>
-          <li>iOS</li>
-          <li>C++</li>
+          {% for tag in allTags %}
+          <li><a href="/?tag={{ tag.name }}">{{ tag.name }}</a></li>
+          {% endfor %}
         </ul>
-        <a class="sui-btn btn-block btn-share" href="./tags-index.html">更多</a>
+        <a class="sui-btn btn-block btn-share" href="/tags">更多</a>
       </div>
     </div>
   </div>
@@ -150,5 +164,52 @@
 {% endblock %}
 
 {% block script %}
-<!-- 待填坑 -->
+<script>
+  $(function () {
+
+    // 获取当前登录的用户信息
+    const user = JSON.parse(window.localStorage.getItem('userInfo'))
+
+    // console.log(user)
+    const $button = $('button[name=follow]')
+    const $followerCount = $('#follower-count')
+
+    // 关注和取消关注按钮注册事件
+    $button.on('click', handleFollow)
+
+    function handleFollow() {
+      // console.log($(this).data('url'))
+      $.ajax({
+        url: $button.data('url'),
+        method: 'POST',
+        data: {
+          userId: user.userId
+        },
+        success(data) {
+          // console.log(data)
+          let {
+            followMsg: {
+              followers
+            }
+          } = data
+          // 动态改变关注人数
+          $followerCount.text(followers.length)
+
+          // console.log(followers.includes(user.userId))
+          // 判断当前用户是否关注了标签
+          if (followers.includes(user.userId)) {
+            $button.removeClass('btn-success')
+              .addClass('btn-danger')
+              .text('取消关注')
+          } else {
+            $button.removeClass('btn-danger')
+              .addClass('btn-success')
+              .text('关注')
+          }
+        }
+      })
+    }
+
+  })
+</script>
 {% endblock %}

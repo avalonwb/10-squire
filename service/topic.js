@@ -63,14 +63,15 @@ exports.topicDelete = async (postsId) => {
 }
 
 // 首页获取所有问题
-exports.getAllTopic = async (_page, _limit, filter) => {
+exports.getAllTopic = async (_page, _limit, filter, tags) => {
   let res = await http({
     url: 'posts',
     method: 'GET',
     params: {
       _page,
       _limit,
-      filter
+      filter,
+      tags
     }
   })
   // console.log(res.headers['x-total-count'])

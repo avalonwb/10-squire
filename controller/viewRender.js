@@ -6,18 +6,30 @@ const {
   findUserById
 } = require('../service/user')
 
+const {
+  findByName,
+  getAllTags
+} = require('../service/tags')
+
 const controller = {
   showIndex: async (req, res, next) => {
     // 请求所有问题的参数
     // 每页条数
     const _limit = 2
     // 当前页
-    const _page = req.query.page || 1
-    const filter = req.query.filter || ''
+    const {
+      page = 1, filter = '', tag = ''
+    } = req.query
     // console.log(filter)
-    // console.log(_page)
+    // console.log(page)
+    // 根据标签名获取标签信息
+    const tagInfo = await findByName(tag)
+    // console.log(tagInfo)
+    // 获取热门标签
+    const allTags = await getAllTags(1, 5)
+    // console.log(allTags)
     // 请求所有问题
-    const ret = await getAllTopic(_page, _limit, filter)
+    const ret = await getAllTopic(page, _limit, filter, tag)
     const topics = ret.data
     // 总页数
     const total = ret.total
@@ -37,34 +49,34 @@ const controller = {
     //   let user = await findUserById(v.userId)
     //   v.userInfo = user
     // })
-    // console.log(topics)
+    console.log(topics)
     // 最新回答 热门回答 等待回答
     const filterArr = [
 
       {
         title: '最新回答',
-        url: '/?page=1',
+        url: `/?page=1&tag=${tag}`,
         filter: ''
       },
       {
         title: '热门回答',
-        url: '/?page=1&filter=hot',
+        url: `/?page=1&filter=hot&tag=${tag}`,
         filter: 'hot'
       },
       {
         title: '等待回答',
-        url: '/?page=1&filter=unresponsive',
+        url: `/?page=1&filter=unresponsive&tag=${tag}`,
         filter: 'unresponsive'
       }
     ]
     res.render('index.html', {
       topics,
-      _page: _page - 0,
-      _limit: _limit - 0,
-      total: total - 0,
+      _page: page - 0,
       lastPage,
       filterArr,
-      filter
+      filter,
+      tagInfo: tagInfo || '',
+      allTags: allTags.data
     })
   },
   showPeopleHome: async (req, res, next) => {
