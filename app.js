@@ -8,15 +8,20 @@ const router = require('./router/index')
 
 const _ = require('lodash')
 
+const config = require('./config/config.default')
+
 const topicRouter = require('./router/topic')
 const commentRouter = require('./router/comment')
 const voteRouter = require('./router/vote')
 const tagsRouter = require('./router/tags')
 const personRouter = require('./router/person')
+const settingRouter = require('./router/setting')
 
 const session = require('express-session')
 
 const cookieParser = require('cookie-parser')
+
+const proxy = require('http-proxy-middleware')
 
 const keepOnLine = require('./midware/keepOnLine')
 
@@ -33,6 +38,15 @@ dayjs.locale('zh-cn')
 
 // 加载相对时间模块
 dayjs.extend(relativeTime)
+
+// 设置代理
+app.use('/api', proxy({
+  target: config.avaterUrl,
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api': '', // rewrite path
+  }
+}))
 
 // 增加读取cookies的中间件
 app.use(cookieParser())
@@ -82,8 +96,11 @@ app.use(voteRouter)
 // 挂载标签模块路由
 app.use(tagsRouter)
 
-// 挂载个人主页路由
+// 挂载个人主页模块路由
 app.use(personRouter)
+
+// 挂载个人设置模块路由
+app.use(settingRouter)
 
 // 配置模板引擎 nunjucks
 const env = nunjucks.configure(path.join(__dirname, './view'), {

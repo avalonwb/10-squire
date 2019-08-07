@@ -49,7 +49,7 @@ const controller = {
     //   let user = await findUserById(v.userId)
     //   v.userInfo = user
     // })
-    console.log(topics)
+    // console.log(topics)
     // 最新回答 热门回答 等待回答
     const filterArr = [
 
