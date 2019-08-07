@@ -9,12 +9,14 @@ const {
 // 展示个人资料页
 exports.showProfile = async (req, res, next) => {
   // 请求用户信息
-  let userId = req.session.user._id
+  let user = req.session.user
+  if (!user) {
+    return res.redirect('/login')
+  }
   // console.log(user)
-  if (!userId) return
   let {
     data: userInfo
-  } = await findUserById(userId)
+  } = await findUserById(user._id)
   // console.log(userInfo)
   res.render('settings-profile.html', {
     userInfo

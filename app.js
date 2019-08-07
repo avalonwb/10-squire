@@ -41,7 +41,7 @@ dayjs.extend(relativeTime)
 
 // 设置代理
 app.use('/api', proxy({
-  target: config.avaterUrl,
+  target: config.baseUrl,
   changeOrigin: true,
   pathRewrite: {
     '^/api': '', // rewrite path

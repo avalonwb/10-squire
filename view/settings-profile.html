@@ -2,6 +2,13 @@
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="/public/css/page-sj-person-myfile.css" />
+<!-- 裁剪插件css -->
+<link rel="stylesheet" type="text/css" href="/node_modules/cropperjs/dist/cropper.min.css">
+<style>
+  #modal-img {
+    max-width: 100%;
+  }
+</style>
 {% endblock%}
 
 {% block main %}
@@ -321,14 +328,23 @@
   </div>
   <div class="clearfix"></div>
   <!-- Modal -->
-
+  <div style="width: 500px;margin: 0 auto">
+    <img src="" alt="" id="modal-img">
+  </div>
+  <div>
+    <button type="button" id="submit-avater">确定</button>
+  </div>
 </div>
 {% endblock %}
 
 {% block script %}
+<script src="/node_modules/cropperjs/dist/cropper.min.js"></script>
 <script>
   $(function () {
 
+    let cropper = null
+
+    // 上传图片 存到服务器 弹出模态框 读取服务器上存的图片
     $('#avater').on('change', function () {
       $.ajax({
         url: '/api/upload',
@@ -340,7 +356,15 @@
         success(res) {
           console.log(res)
           if (res.length) {
-
+            let image = new Image()
+            let imgSrc = 'http://localhost:8080' + res[0].url
+            image.src = imgSrc
+            image.onload = function () {
+              $('#modal-img').attr('src', imgSrc)
+              setTimeout(() => {
+                initCropper()
+              }, 200)
+            }
           }
         },
         error(err) {
@@ -348,6 +372,30 @@
         }
       })
     })
+
+    // 点击确定上传裁剪图片
+    $('#submit-avater').on('click', function () {
+      // console.log('上传裁剪图片')
+      // 拿到裁剪后图片的数据
+      console.log(cropper.getData())
+    })
+
+    // 初始化裁切工具
+    function initCropper() {
+      const image = document.getElementById('modal-img')
+      cropper = new Cropper(image, {
+        aspectRatio: 1 / 1,
+        crop(event) {
+          // console.log(event.detail.x)
+          // console.log(event.detail.y)
+          // console.log(event.detail.width)
+          // console.log(event.detail.height)
+          // console.log(event.detail.rotate)
+          // console.log(event.detail.scaleX)
+          // console.log(event.detail.scaleY)
+        }
+      })
+    }
 
 
   })
