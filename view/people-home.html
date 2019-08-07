@@ -67,46 +67,24 @@
   <div class="right-content">
     <div class="home-content">
       <ul class="sui-nav nav-tabs nav-large" id="nav-tabs">
-        <li class="active"><a href="/home/{{ user._id }}/posts" data-toggle="one">动态</a></li>
-        <li><a href="/home/{{ user._id }}/comments" data-toggle="two">回答</a></li>
+        <li class="active"><a href="/home/{{ user._id }}/posts" data-toggle="one" data-tpl="posts">动态</a></li>
+        <li><a href="/home/{{ user._id }}/comments" data-toggle="two" data-tpl="comments">回答</a></li>
+        <li><a href="/home/{{ user._id }}/tags" data-toggle="three" data-tpl="tags">标签</a></li>
       </ul>
       <div class="tab-content tab-wraped">
         <div id="one" class="tab-pane active">
-          <ul class="question-list">
-            <li> <span class="fl good"><span class="num">12</span> 有用</span> <span class="title"><a
-                  href="#">有关PHP初级进阶的问题</a></span> <span class="fr date">4月6日</span> <span class="clearfix"></span>
-            </li>
-            <li> <span class="fl good"><span class="num">12</span> 有用</span> <span class="title"><a
-                  href="#">有关JAVA初级进阶的问题</a></span> <span class="fr date">4月6日</span> <span class="clearfix"></span>
-            </li>
-            <li> <span class="fl good"><span class="num">12</span> 有用</span> <span class="title"><a
-                  href="#">有关HTML5初级进阶的问题</a></span> <span class="fr date">4月6日</span> <span class="clearfix"></span>
-            </li>
-            <li> <span class="fl good"><span class="num">12</span> 有用</span> <span class="title"><a
-                  href="#">有关C++初级进阶的问题</a></span> <span class="fr date">4月6日</span> <span class="clearfix"></span>
-            </li>
-            <li> <span class="fl good"><span class="num">12</span> 有用</span> <span class="title"><a
-                  href="#">有关python初级进阶的问题</a></span> <span class="fr date">4月6日</span> <span class="clearfix"></span>
-            </li>
+          <ul class="question-list" id="posts">
+            <!-- 待填坑 -->
           </ul>
         </div>
         <div id="two" class="tab-pane">
-          <ul class="question-list">
-            <li> <span class="fl good"> <span class="num">8</span> 有用</span> <span class="title"><a
-                  href="#">有关PHP初级进阶的问题</a></span> <span class="fr date">2017-07-05 15:08</span> <span
-                class="clearfix"></span> </li>
-            <li> <span class="fl good"> <span class="num">7</span> 有用</span> <span class="title"><a
-                  href="#">有关JAVA初级进阶的问题</a></span> <span class="fr date">2017-07-05 15:08</span> <span
-                class="clearfix"></span> </li>
-            <li> <span class="fl good"> <span class="num">6</span> 有用</span> <span class="title"><a
-                  href="#">有关HTML5初级进阶的问题</a></span> <span class="fr date">2017-07-05 15:08</span> <span
-                class="clearfix"></span> </li>
-            <li> <span class="fl good"> <span class="num">12</span> 有用</span> <span class="title"><a
-                  href="#">有关C++初级进阶的问题</a></span> <span class="fr date">2017-07-05 15:08</span> <span
-                class="clearfix"></span> </li>
-            <li> <span class="fl good"> <span class="num">12</span> 有用</span> <span class="title"><a
-                  href="#">有关python初级进阶的问题</a></span> <span class="fr date">2017-07-05 15:08</span> <span
-                class="clearfix"></span> </li>
+          <ul class="question-list" id="comments">
+            <!-- 待填坑 -->
+          </ul>
+        </div>
+        <div id="three" class="tab-pane">
+          <ul class="question-list" id="tags">
+            <!-- 待填坑 -->
           </ul>
         </div>
       </div>
@@ -193,26 +171,140 @@
 {% endblock %}
 
 {% block script %}
+<script src="/node_modules/dayjs/dayjs.min.js"></script>
+<script src="/node_modules/dayjs/plugin/relativeTime.js"></script>
+<script src="/node_modules/dayjs/locale/zh-cn.js"></script>
+<!-- 发布的主题模板 -->
+<script type="text/template" id="tpl-posts">
+  <% data.forEach(topic => { %>
+    <li> 
+      <span class="fl good">
+        <span class="num"><%= topic.voteCount %></span> 
+        有用
+      </span>
+      <span class="title">
+        <a href="#"><%= topic.title %></a>
+      </span> 
+      <span class="fr date"><%= topic.updatedAt %></span> 
+      <span class="clearfix"></span>
+    </li>
+  <% }) %>
+</script>
+
+<!-- 发布的评论模板 -->
+<script type="text/template" id="tpl-comments">
+  <% data.forEach(comment => { %>
+    <li> 
+      <span class="fl good">
+        <span class="num"><%= comment.voteCount %></span> 
+        有用
+      </span>
+      <span class="title">
+        <a href="#"><%= comment.title %></a>
+      </span> 
+      <span class="fr date"><%= comment.updatedAt %></span> 
+      <span class="clearfix"></span>
+    </li>
+  <% }) %>
+</script>
+
+<!-- 关注的标签 -->
+<script type="text/template" id="tpl-tags">
+  <% if (data.length) { %>
+  <% data.forEach(tag => { %>
+    <li> 
+      <span class="fl good">
+        <span class="num"><%= tag.voteCount %></span> 
+        有用
+      </span>
+      <span class="title">
+        <a href="#"><%= tag.title %></a>
+      </span> 
+      <span class="fr date"><%= tag.updatedAt %></span> 
+      <span class="clearfix"></span>
+    </li>
+  <% }) %>
+  <% } else { %>
+    <li>
+      <span>没有数据</span>
+    </li>
+  <% } %> 
+</script>
+
 <script>
+  // 加载中文包
+  dayjs.locale('zh-cn')
+
+  // 加载相对时间模块
+  dayjs.extend(dayjs_plugin_relativeTime)
+
   $(function () {
 
+    const user = JSON.parse(window.localStorage.getItem('userInfo'))
+
+    // console.log(user)
+
+    $.ajax({
+      url: `/home/${user.userId}/posts`,
+      method: 'GET',
+      success(res) {
+        // console.log(res)
+        if (res.code === 0) {
+          let {
+            data
+          } = res
+          // console.log(topics)
+          handleRes(data.slice(0, 5), 'posts')
+        }
+      }
+    })
+
     $('#nav-tabs li a').on('click', function () {
-      // console.log($(this).data('toggle'))
       // console.log($(this).attr('href'))
-      // console.log($(this).closest('#nav-tabs').find('li'))
+      const {
+        toggle,
+        tpl
+      } = $(this).data()
       // 变换tab
       $(this).closest('#nav-tabs').find('li').removeClass('active')
       $(this).parent().addClass('active')
       // 变换内容
       $('.tab-content').children('div').hide()
-      $(`#${$(this).data('toggle')}`).show()
-      // if ($(this).data('toggle') === 'one') {
-      //   $('#one').show()
-      //   $('#two').hidden()
-      // }
+      $(`#${toggle}`).show()
+      // 发送请求
+      $.ajax({
+        url: $(this).attr('href'),
+        method: 'GET',
+        success: res => {
+          // console.log(res)
+          if (res.code === 0) {
+            let {
+              data
+            } = res
+            console.log(data)
+            handleRes(data.slice(0, 5), tpl)
+          }
+        }
+      })
 
       return false
     })
+
+    function handleRes(data, tplType) {
+      // 修改时间
+      if (data.length) {
+        data.forEach(v => {
+          v.updatedAt = dayjs().from(dayjs(v.updatedAt))
+          v.createdAt = dayjs().from(dayjs(v.createdAt))
+        })
+      }
+      let tplHtml = $(`#tpl-${tplType}`).html()
+      // console.log(tplHtml)
+      let htmlStr = _.template(tplHtml)({
+        data
+      })
+      $(`#${tplType}`).html(htmlStr)
+    }
 
   })
 </script>
