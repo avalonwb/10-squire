@@ -329,7 +329,7 @@
   <div class="clearfix"></div>
   <!-- Modal -->
   <div style="width: 500px;margin: 0 auto">
-    <img src="" alt="" id="modal-img">
+    <img src="" alt="" id="modal-img" data-url="{{ avaterUrl }}">
   </div>
   <div>
     <button type="button" id="submit-avater">确定</button>
@@ -354,14 +354,15 @@
         contentType: false,
         cache: false,
         success(res) {
-          console.log(res)
+          // console.log(res)
           if (res.length) {
             let image = new Image()
-            let imgSrc = 'http://localhost:8080' + res[0].url
+            let imgSrc = $('#modal-img').data('url') + res[0].url
             image.src = imgSrc
             image.onload = function () {
               $('#modal-img').attr('src', imgSrc)
               setTimeout(() => {
+                // 初始化裁切工具
                 initCropper()
               }, 200)
             }
@@ -377,7 +378,20 @@
     $('#submit-avater').on('click', function () {
       // console.log('上传裁剪图片')
       // 拿到裁剪后图片的数据
-      console.log(cropper.getData())
+      // console.log(cropper.getData())
+      // 发送请求 更新图片
+      let data = {
+        ...cropper.getData(),
+        file: $('#modal-img').attr('src')
+      }
+      $.ajax({
+        url: '/setting/avater/update',
+        method: 'POST',
+        data,
+        success(res) {
+          console.log(res)
+        }
+      })
     })
 
     // 初始化裁切工具

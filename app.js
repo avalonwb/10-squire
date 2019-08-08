@@ -78,6 +78,7 @@ app.use(keepOnLine)
 app.use((req, res, next) => {
   app.locals.user = req.session.user
   // console.log(app.locals.user)
+  app.locals.avaterUrl = config.avaterUrl
   next()
 })
 

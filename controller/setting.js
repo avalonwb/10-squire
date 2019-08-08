@@ -3,7 +3,8 @@ const {
 } = require('../service/user')
 
 const {
-  update
+  update,
+  Avaterupdate
 } = require('../service/setting')
 
 // 展示个人资料页
@@ -35,4 +36,16 @@ exports.updateProfile = async (req, res, next) => {
     // 退回上个路由 相当于刷新页面
     res.redirect('back')
   }
+}
+
+// 更新用户头像
+exports.updateAvater = async (req, res, next) => {
+  // console.log(req.body)
+  let user = req.session.user
+  if (!user) {
+    return res.redirect('/login')
+  }
+  // console.log(user._id)
+  let ret = await Avaterupdate(user._id, req.body)
+  console.log(ret)
 }
